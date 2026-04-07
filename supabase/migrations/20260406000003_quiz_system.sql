@@ -11,6 +11,7 @@ create table public.quiz_registrations (
   interest_in_science text not null,
   last_class_position text not null,
   number_of_student_in_class text,
+  status text check (status in ('pending', 'accepted', 'rejected')) default 'pending',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

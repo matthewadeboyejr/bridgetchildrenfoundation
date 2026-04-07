@@ -7,11 +7,9 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true)
   const [isForgotPassword, setIsForgotPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
@@ -34,40 +32,26 @@ export default function LoginPage() {
       return
     }
 
-    if (isLogin) {
-      const { data: { user }, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    const { data: { user }, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-      if (error) {
-        setError(error.message)
-      } else if (user) {
-        // Fetch the role from profiles
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single()
+    if (error) {
+      setError(error.message)
+    } else if (user) {
+      // Fetch the role from profiles
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
 
-        if (profile?.role === 'admin') {
-          router.push('/admin')
-        } else {
-          router.push('/dashboard')
-        }
+      if (profile?.role === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
       }
-    } else {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      })
-      if (error) setError(error.message)
-      else setMessage('Registration successful! Please check your email for confirmation.')
     }
     setLoading(false)
   }
@@ -77,7 +61,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <div className="inline-flex p-3 bg-primary-800 rounded-2xl mb-4 shadow-xl shadow-primary-900/10">
-            <GraduationCap className="text-white" size={32} />
+            < GraduationCap className="text-white" size={32} />
           </div>
           <h1 className="text-3xl font-bold text-primary-900 dark:text-white mb-2">
             Bridget<span className="text-primary-500">Foundation</span>
@@ -85,9 +69,7 @@ export default function LoginPage() {
           <p className="text-primary-700/60 dark:text-primary-300/60">
             {isForgotPassword 
               ? 'Enter your email to receive a password reset link.' 
-              : isLogin 
-                ? 'Welcome back! Please sign in to your account.' 
-                : 'Join us today and start your journey.'}
+              : 'Welcome back! Please sign in to your account.'}
           </p>
         </div>
 
@@ -97,23 +79,6 @@ export default function LoginPage() {
           className="bg-white dark:bg-primary-900/20 backdrop-blur-xl rounded-4xl p-8 shadow-xl border border-white/20"
         >
           <form onSubmit={handleAuth} className="space-y-6">
-            {!isLogin && !isForgotPassword && (
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-primary-900 dark:text-primary-100 ml-1">Full Name</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" size={20} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="John Doe"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-white dark:bg-primary-950/50 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-primary-800 transition-all outline-none"
-                  />
-                </div>
-              </div>
-            )}
-
             <div className="space-y-2">
               <label className="text-sm font-semibold text-primary-900 dark:text-primary-100 ml-1">Email Address</label>
               <div className="relative">
@@ -133,15 +98,13 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <label className="text-sm font-semibold text-primary-900 dark:text-primary-100 ml-1">Password</label>
-                  {isLogin && (
-                    <button 
-                      type="button" 
-                      onClick={() => setIsForgotPassword(true)}
-                      className="text-xs text-primary-500 hover:underline"
-                    >
-                      Forgot Password?
-                    </button>
-                  )}
+                  <button 
+                    type="button" 
+                    onClick={() => setIsForgotPassword(true)}
+                    className="text-xs text-primary-500 hover:underline"
+                  >
+                    Forgot Password?
+                  </button>
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" size={20} />
@@ -178,30 +141,23 @@ export default function LoginPage() {
                 <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  {isForgotPassword ? 'Send Reset Link' : isLogin ? 'Sign In' : 'Create Account'}
+                  {isForgotPassword ? 'Send Reset Link' : 'Sign In'}
                   <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-8 text-center space-y-4">
-            {isForgotPassword ? (
+          {isForgotPassword && (
+            <div className="mt-8 text-center">
               <button
                 onClick={() => setIsForgotPassword(false)}
                 className="text-sm font-medium text-primary-700/60 dark:text-primary-300/60 hover:text-primary-800 transition-colors"
               >
                 Back to Sign In
               </button>
-            ) : (
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-sm font-medium text-primary-700/60 dark:text-primary-300/60 hover:text-primary-800 transition-colors"
-              >
-                {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
-              </button>
-            )}
-          </div>
+            </div>
+          )}
         </motion.div>
       </div>
     </div>

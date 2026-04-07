@@ -21,8 +21,8 @@ export const Navbar = () => {
     { name: 'Home', href: '/' },
     { name: 'Scholarships', href: '/scholarships' },
     { name: 'About Us', href: '/about' },
-    { name: 'Our Impact', href: '#impact' },
-    { name: 'Contact', href: '#contact' },
+    // { name: 'Our Impact', href: '#impact' },
+    { name: 'Contact', href: '/contact' },
   ]
 
   return (
