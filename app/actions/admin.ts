@@ -89,3 +89,65 @@ export async function rejectStudent(registrationId: string) {
   revalidatePath('/admin/applications')
   return { success: true }
 }
+
+export async function requestStudentPerformance(studentId: string) {
+  await ensureAdmin()
+  const supabase = createAdminClient()
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ 
+      is_performance_requested: true,
+      performance_status: 'requested'
+    })
+    .eq('id', studentId)
+
+  if (error) {
+    throw new Error('Failed to request performance')
+  }
+
+  revalidatePath('/admin/students')
+  return { success: true }
+}
+
+export async function verifyStudent(studentId: string) {
+  await ensureAdmin()
+  const supabase = createAdminClient()
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ 
+      verification_status: 'verified',
+      verification_feedback: null
+    })
+    .eq('id', studentId)
+
+  if (error) {
+    throw new Error('Verification failed')
+  }
+
+  revalidatePath('/admin/students')
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function rejectVerification(studentId: string, feedback: string) {
+  await ensureAdmin()
+  const supabase = createAdminClient()
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ 
+      verification_status: 'rejected',
+      verification_feedback: feedback
+    })
+    .eq('id', studentId)
+
+  if (error) {
+    throw new Error('Rejection failed')
+  }
+
+  revalidatePath('/admin/students')
+  revalidatePath('/dashboard')
+  return { success: true }
+}

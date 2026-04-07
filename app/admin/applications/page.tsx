@@ -38,6 +38,14 @@ export default function AdminApplications() {
     action: 'accept'
   })
 
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean,
+    message: string
+  }>({
+    isOpen: false,
+    message: ''
+  })
+
   const supabase = createClient()
 
   const fetchRegistrations = async () => {
@@ -78,7 +86,10 @@ export default function AdminApplications() {
       }
       await fetchRegistrations()
     } catch (err: any) {
-      alert(err.message)
+      setErrorModal({
+        isOpen: true,
+        message: err.message || 'An unexpected error occurred during the invitation process.'
+      })
     } finally {
       setProcessingId(null)
     }
@@ -321,6 +332,17 @@ export default function AdminApplications() {
             : "This will mark the application as rejected and notify the student."
         }
         confirmText={confirmModal.action === 'accept' ? 'Yes, Approve' : 'Yes, Reject'}
+      />
+
+      <ConfirmModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        onConfirm={() => setErrorModal({ isOpen: false, message: '' })}
+        title="Action Failed"
+        description={errorModal.message}
+        confirmText="Understood"
+        type="danger"
+        cancelText=""
       />
     </div>
   )

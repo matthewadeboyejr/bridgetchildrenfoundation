@@ -15,6 +15,7 @@ import {
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 
 
 export default function AdminDashboard() {
@@ -26,6 +27,15 @@ export default function AdminDashboard() {
   const [recentRegistrations, setRecentRegistrations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState<string | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; id: string | null; action: 'accept' | 'reject' }>({
+    isOpen: false,
+    id: null,
+    action: 'accept'
+  })
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: ''
+  })
 
   const supabase = createClient()
 
@@ -92,17 +102,29 @@ export default function AdminDashboard() {
     }
   }, [])
 
-  const handleAction = async (id: string, action: 'accept' | 'reject') => {
+  const handleAction = async () => {
+    const { id, action } = confirmModal
+    if (!id) return
+
+    setConfirmModal(prev => ({ ...prev, isOpen: false }))
     setProcessingId(id)
+
     try {
       if (action === 'accept') await acceptStudent(id)
       else await rejectStudent(id)
       await fetchDashboardData()
     } catch (err: any) {
-      alert(err.message)
+      setErrorModal({
+        isOpen: true,
+        message: err.message || 'An unexpected error occurred.'
+      })
     } finally {
       setProcessingId(null)
     }
+  }
+
+  const triggerConfirm = (id: string, action: 'accept' | 'reject') => {
+    setConfirmModal({ isOpen: true, id, action })
   }
 
   const adminStatsCards = [
@@ -187,8 +209,8 @@ export default function AdminDashboard() {
                           <div className="w-5 h-5 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
                         ) : row.status === 'pending' ? (
                           <>
-                            <button onClick={() => handleAction(row.id, 'accept')} className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 text-emerald-600 rounded-lg transition-all"><CheckCircle2 size={16} /></button>
-                            <button onClick={() => handleAction(row.id, 'reject')} className="p-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-600 rounded-lg transition-all"><XCircle size={16} /></button>
+                            <button onClick={() => triggerConfirm(row.id, 'accept')} className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 text-emerald-600 rounded-lg transition-all"><CheckCircle2 size={16} /></button>
+                            <button onClick={() => triggerConfirm(row.id, 'reject')} className="p-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-600 rounded-lg transition-all"><XCircle size={16} /></button>
                           </>
                         ) : (
                           <span className={cn(
@@ -227,6 +249,26 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={handleAction}
+        title={confirmModal.action === 'accept' ? 'Accept Student?' : 'Reject Student?'}
+        description={`Are you sure you want to ${confirmModal.action} this student? This will ${confirmModal.action === 'accept' ? 'invite them to the foundation platform' : 'reject their application'}.`}
+        confirmText={`Yes, ${confirmModal.action === 'accept' ? 'Accept' : 'Reject'}`}
+        type={confirmModal.action === 'accept' ? 'success' : 'danger'}
+      />
+
+      <ConfirmModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        onConfirm={() => setErrorModal({ isOpen: false, message: '' })}
+        title="Action Failed"
+        description={errorModal.message}
+        confirmText="Understood"
+        type="danger"
+        cancelText=""
+      />
     </div>
   )
 }

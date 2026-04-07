@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -9,32 +9,55 @@ import {
   User,
   Settings,
   LogOut,
-  GraduationCap
+  GraduationCap,
+  Zap
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
-const navItems = [
+export const navItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'My Applications', href: '/dashboard/applications', icon: FileText },
   { name: 'Profile', href: '/dashboard/profile', icon: User },
-  { name: 'Scholarships', href: '/dashboard/scholarships', icon: GraduationCap },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Performance', href: '/dashboard/performance', icon: Zap },
+  //{ name: 'Scholarships', href: '/dashboard/scholarships', icon: GraduationCap },
+  //{ name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 
 export const Sidebar = () => {
   const pathname = usePathname()
   const router = useRouter()
+  const [profile, setProfile] = useState<any>(null)
   const supabase = createClient()
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('id', user.id)
+        .single()
+
+      setProfile(data)
+    }
+    fetchProfile()
+  }, [])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.push('/login')
   }
 
+  const getInitials = (name: string) => {
+    return name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'ST'
+  }
+
   return (
-    <aside className="w-72 h-screen fixed left-0 top-0 bg-white dark:bg-primary-950 border-r border-primary-100 dark:border-primary-900 flex flex-col z-40">
+    <aside className="w-72 h-screen fixed left-0 top-0 bg-white dark:bg-primary-950 border-r border-primary-100 dark:border-primary-900 lg:flex hidden flex-col z-40">
       <div className="p-8">
         <Link href="/" className="flex items-center gap-2 mb-10">
           <div className="p-2 bg-primary-800 rounded-xl">
@@ -69,19 +92,21 @@ export const Sidebar = () => {
       </div>
 
       <div className="mt-auto p-8 space-y-4">
-        <div className="p-4 bg-primary-50 dark:bg-primary-900/30 rounded-2xl flex items-center gap-3 border border-primary-100 dark:border-primary-800">
-          <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center text-primary-800 dark:text-primary-300 font-bold uppercase">
-            SU
+        {profile && (
+          <div className="p-4 bg-primary-50 dark:bg-primary-900/30 rounded-2xl flex items-center gap-3 border border-primary-100 dark:border-primary-800">
+            <div className="w-10 h-10 rounded-full bg-primary-800 flex items-center justify-center text-white font-bold uppercase shrink-0">
+              {getInitials(profile.full_name)}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-bold text-primary-900 dark:text-white truncate">{profile.full_name}</p>
+              <p className="text-xs text-primary-700/50 dark:text-primary-300/50 truncate">{profile.email}</p>
+            </div>
           </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-bold text-primary-900 dark:text-white truncate">Student User</p>
-            <p className="text-xs text-primary-700/50 dark:text-primary-300/50 truncate">student@example.com</p>
-          </div>
-        </div>
+        )}
 
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all text-left"
         >
           <LogOut size={20} />
           Sign Out

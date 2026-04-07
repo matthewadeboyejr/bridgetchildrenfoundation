@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { Sidebar } from '@/components/dashboard/Sidebar'
+import { Sidebar, navItems } from '@/components/dashboard/Sidebar'
+import { MobileNav } from '@/components/dashboard/MobileNav'
 import { Search, Bell } from 'lucide-react'
 
 export default function DashboardLayout({
@@ -12,10 +13,11 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-primary-50 dark:bg-primary-950/20">
       <Sidebar />
+      <MobileNav items={navItems} />
       
-      <div className="pl-72">
-        {/* Header */}
-        <header className="h-20 bg-white/80 dark:bg-primary-950/80 backdrop-blur-md border-b border-primary-100 dark:border-primary-900 px-8 flex items-center justify-between sticky top-0 z-30">
+      <div className="lg:pl-72">
+        {/* Desktop Header */}
+        <header className="h-20 bg-white/80 dark:bg-primary-950/80 backdrop-blur-md border-b border-primary-100 dark:border-primary-900 px-8 flex items-center justify-between sticky top-0 z-30 hidden lg:flex">
           <div className="relative w-96 hidden md:block">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" size={18} />
             <input 
@@ -36,7 +38,7 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        <main className="p-8">
+        <main className="p-4 md:p-8">
           {children}
         </main>
       </div>

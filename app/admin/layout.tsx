@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { MobileNav } from '@/components/dashboard/MobileNav'
 import { 
   BarChart3, 
   Users, 
@@ -41,8 +42,10 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-primary-50 dark:bg-primary-950/20">
+      <MobileNav items={adminNavItems} title="Admin Panel" />
+      
       {/* Sidebar */}
-      <aside className="w-72 h-screen fixed left-0 top-0 bg-white dark:bg-primary-950 border-r border-primary-100 dark:border-primary-900 flex flex-col z-40">
+      <aside className="w-72 h-screen fixed left-0 top-0 bg-white dark:bg-primary-950 border-r border-primary-100 dark:border-primary-900 hidden lg:flex flex-col z-40">
         <div className="p-8">
           <Link href="/" className="flex items-center gap-2 mb-10">
             <div className="p-2 bg-primary-800 rounded-xl">
@@ -88,8 +91,8 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Content */}
-      <div className="pl-72">
-        <header className="h-20 bg-white/80 dark:bg-primary-950/80 backdrop-blur-md border-b border-primary-100 dark:border-primary-900 px-8 flex items-center justify-between sticky top-0 z-30">
+      <div className="lg:pl-72">
+        <header className="h-20 bg-white/80 dark:bg-primary-950/80 backdrop-blur-md border-b border-primary-100 dark:border-primary-900 px-8 flex items-center justify-between sticky top-0 z-30 hidden lg:flex">
           <div className="relative w-96 hidden md:block">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" size={18} />
             <input 
@@ -116,7 +119,7 @@ export default function AdminLayout({
           </div>
         </header>
 
-        <main className="p-8">
+        <main className="p-4 md:p-8">
           {children}
         </main>
       </div>
