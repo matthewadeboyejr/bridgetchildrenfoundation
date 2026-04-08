@@ -24,7 +24,7 @@ export default function Home() {
                 className="lg:w-1/2 relative"
               >
                 <div className="aspect-[4/5] relative rounded-[4rem] overflow-hidden shadow-2xl">
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200')] bg-cover bg-center" />
+                  <div className="absolute inset-0 bg-[url('/')] bg-cover bg-center" />
                   <div className="absolute inset-0 bg-primary-950/20" />
                 </div>
 
@@ -64,7 +64,7 @@ export default function Home() {
                       Established in 2023, the foundation was created with a clear mission: to support academically gifted students who lack the financial means to pursue their educational aspirations.
                     </p>
                     <p>
-                      The foundation focuses on providing scholarships for students from secondary school through tertiary education, with a particular emphasis on those pursuing studies in the sciences and related fields. By investing in education, the Bridget Foundation aims to nurture future leaders, innovators, and professionals who will contribute positively to their communities and society at large.
+                      The foundation focuses on providing scholarships for students from secondary school through tertiary education, with a particular emphasis on those pursuing studies in the sciences and related fields. By investing in education, the Bridget Children Foundation For Quality Education aims to nurture future leaders, innovators, and professionals who will contribute positively to their communities and society at large.
 
                     </p>
                     <p>
@@ -72,8 +72,8 @@ export default function Home() {
 
                     </p>
                     <p>
-                      The Bridget Foundation is named in honor of Dr. Usman’s grandmother, Bridget, whose deep appreciation for education and belief in its transformative power continues to inspire the foundation’s mission. Her legacy lives on through the opportunities created for young people whose dreams might otherwise remain out of reach.
-                      Through education, mentorship, and opportunity, the Bridget Foundation seeks to empower the next generation and create lasting impact in the communities it serves.
+                      The Bridget Children Foundation For Quality Education is named in honor of Dr. Usman’s grandmother, Bridget, whose deep appreciation for education and belief in its transformative power continues to inspire the foundation’s mission. Her legacy lives on through the opportunities created for young people whose dreams might otherwise remain out of reach.
+                      Through education, mentorship, and opportunity, the Bridget Children Foundation For Quality Education seeks to empower the next generation and create lasting impact in the communities it serves.
                     </p>
                   </div>
                 </div>
