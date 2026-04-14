@@ -7,6 +7,7 @@ import { Scholarships } from '@/components/landing/Scholarships'
 import { Impact } from '@/components/landing/Impact'
 import { Footer } from '@/components/landing/Footer'
 import { motion } from 'framer-motion'
+import { Recognition } from '@/components/landing/Recognition'
 
 export default function Home() {
   return (
@@ -114,6 +115,7 @@ export default function Home() {
         <Scholarships />
       </div>
       <Impact />
+      <Recognition />
       <Footer />
     </main>
   )

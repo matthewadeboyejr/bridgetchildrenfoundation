@@ -5,13 +5,14 @@ import { Solutions } from '@/components/landing/Solutions'
 import { Scholarships } from '@/components/landing/Scholarships'
 import { Impact } from '@/components/landing/Impact'
 import { Footer } from '@/components/landing/Footer'
+import { Recognition } from '@/components/landing/Recognition'
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white dark:bg-primary-950">
       <Navbar />
       <Hero />
-      <div >
+      <div>
         <About />
       </div>
       <Solutions />
@@ -19,6 +20,7 @@ export default function Home() {
         <Scholarships />
       </div>
       <Impact />
+      <Recognition />
       <Footer />
     </main>
   )
